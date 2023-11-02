@@ -1,0 +1,5 @@
+.env
+
+# Local volumes
+conf/
+db_data/

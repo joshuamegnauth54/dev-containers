@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  database:
+    # Default port: 5432 on host and container
+    image: 'postgres:latest'
+    ports:
+      - "5432:5432"
+    # Variables 
+    # POSTGRES_USER=
+    # POSTGRES_PASSWORD=
+    # POSTGRES_DB=
+    # POSTGRES_INITDB_ARGS=
+    env_file: .env
+    volumes:
+      - ./conf/postgresql.conf:/etc/postgresql.conf
+      - ./db_data:/var/lib/postgresql/data
+
