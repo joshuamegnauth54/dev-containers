@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  database:
+    # Default port: 5432 on host and container
+    image: postgres:latest
+    restart: unless-stopped
+    ports:
+      - "${PGPORT}:${PGPORT}"
+    # Variables 
+    # https://www.postgresql.org/docs/current/libpq-envars.html
+    # https://hub.docker.com/_/postgres/
+    # PGUSER=
+    # PGPASSWORD=
+    # POSTGRES_PASSWORD=
+    # PGHOST=
+    # PGPORT=
+    # PGDATABASE=
+    # PGOPTIONS=
+    # DOCKER_HOST=
+    environment:
+      PGUSER: "${PGUSER}"
+      PGHOST: "${PGHOST}"
+      PGPORT: "${PGPORT}"
+      PGPASSWORD: "${PGPASSWORD}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+      PGDATABASE: "${PGDATABASE}"
+      PGOPTIONS: "${PGOPTIONS}"
+      DATABASE_URL: "${DATABASE_URL}"
+
+    volumes:
+      # postgresql.conf can also go in here
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:

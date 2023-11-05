@@ -1,5 +1,4 @@
 .env
 
 # Local volumes
-conf/
-db_data/
+postgres_data/
