@@ -1,29 +1,60 @@
 # DEVO
 
-Q: Are we not men?
-A: We are Devo!
-Q: Are we not men?
-A: We are Devo!
-Q: Are we not men?
-A: We are Devo!
-Q: Are we not men?
-A: We are Devo!
-Q: Are we not men?
-A: We are Devo!
-Q: Are we not men?
-A: We are Devo!
-Q: Are we not men?
-A: We are Devo!
-Q: Are we not men?
-A: We are Devo!
-Q: Are we not men?
-A: We are Devo!
-Q: Are we not men?
-A: We are Devo!
-Q: Are we not men?
-A: We are Devo!
-Q: Are we not men?
-A: We are Devo!
+*Q*: Are we not *men*?
+
+*A*: We are *Devo*!
+
+*Q*: Are we not *men*?
+
+*A*: We are *Devo*!
+
+*Q*: Are we not *men*?
+
+*A*: We are *Devo*!
+
+*Q*: Are we not *men*?
+
+*A*: We are *Devo*!
+
+*Q*: Are we not *men*?
+
+*A*: We are *Devo*!
+
+*Q*: Are we not *men*?
+
+*A*: We are *Devo*!
+
+*Q*: Are we not *men*?
+
+*A*: We are *Devo*!
+
+*Q*: Are we not *men*?
+
+*A*: We are *Devo*!
+
+*Q*: Are we not *men*?
+
+*A*: We are *Devo*!
+
+*Q*: Are we not *men*?
+
+*A*: We are *Devo*!
+
+*Q*: Are we not *men*?
+
+*A*: We are *Devo*!
+
+*Q*: Are we not *men*?
+
+*A*: We are *Devo*!
+
+*Q*: Are we not *men*?
+
+*A*: We are *Devo*!
+
+*Q*: Are we not *men*?
+
+*A*: We are *Devo*!
 
 Development Environments are Very Ordinary
 

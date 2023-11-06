@@ -1,4 +1,5 @@
 version: '3.8'
+name: "main-app-name"
 
 services:
   database:
@@ -11,6 +12,7 @@ services:
     # https://www.postgresql.org/docs/current/libpq-envars.html
     # https://hub.docker.com/_/postgres/
     # PGUSER=
+    # POSTGRES_USER=
     # PGPASSWORD=
     # POSTGRES_PASSWORD=
     # PGHOST=
@@ -20,6 +22,7 @@ services:
     # DOCKER_HOST=
     environment:
       PGUSER: "${PGUSER}"
+      POSTGRES_USER: "${POSTGRES_USER}"
       PGHOST: "${PGHOST}"
       PGPORT: "${PGPORT}"
       PGPASSWORD: "${PGPASSWORD}"
