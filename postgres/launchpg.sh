@@ -31,7 +31,13 @@ fi
 # Launch docker and detach so that it runs in the background
 docker compose -f "${COMPOSE_CONF}" --env-file .env up --detach
 
-until ! pg_isready -d "${DATABASE_URL}"; do
+if [ "$?" ]; then
+    echo "Unable to start postgres container via Docker"
+    printf "\tCompose path: %s\n" ${COMPOSE_CONF}
+    exit 1
+fi
+
+until pg_isready -d "${DATABASE_URL}"; do
     echo "Waiting for postgres server to be ready (${PGHOST}:${PGPORT})"
     sleep 1
 done
