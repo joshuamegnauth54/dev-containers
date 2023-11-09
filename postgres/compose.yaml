@@ -18,6 +18,7 @@ services:
     # PGHOST=
     # PGPORT=
     # PGDATABASE=
+    # POSTGRES_DB=
     # PGOPTIONS=
     # DOCKER_HOST=
     environment:
@@ -28,6 +29,7 @@ services:
       PGPASSWORD: "${PGPASSWORD}"
       POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
       PGDATABASE: "${PGDATABASE}"
+      POSTGRES_DB: "${POSTGRES_DB}"
       PGOPTIONS: "${PGOPTIONS}"
       DATABASE_URL: "${DATABASE_URL}"
 

@@ -29,9 +29,7 @@ fi
 . ./.env
 
 # Launch docker and detach so that it runs in the background
-docker compose -f "${COMPOSE_CONF}" --env-file .env up --detach
-
-if [ "$?" ]; then
+if ! docker compose -f "${COMPOSE_CONF}" --env-file .env up --detach; then
     echo "Unable to start postgres container via Docker"
     printf "\tCompose path: %s\n" ${COMPOSE_CONF}
     exit 1
@@ -43,20 +41,18 @@ until pg_isready -d "${DATABASE_URL}"; do
 done
 
 echo "Running sqlx migrations"
-sqlx database create
-if [ "$?" ]; then
+if ! sqlx database create; then
     echo "Migrations: Failed to create database"
     docker compose -f "${COMPOSE_CONF}" --env-file .env down
     exit 1
 fi
 
-sqlx migrate run
-if [ "$?" ]; then
+if ! sqlx migrate run; then
     echo "Migrations: Failed to run migrations"
     docker compose -f "${COMPOSE_CONF}" --env-file .env down
     exit 1
 fi
 
+# Server started; tail logs
 echo "Postgres server is ready"
-
-docker compose -f "${COMPOSE_CONF}" logs
+docker compose -f "${COMPOSE_CONF}" logs --follow
