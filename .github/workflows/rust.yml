@@ -1,10 +1,6 @@
 name: Rust
 
-on:
-  push:
-    branches: '*'
-  pull_request:
-    branches: '*'
+on: [ push, pull_request ]
 
 env:
   CARGO_TERM_COLOR: always
@@ -30,7 +26,17 @@ jobs:
         with:
           components: rustfmt
       - name: Check Rust code with clippy
-      - run: cargo clippy --all-features --verbose
+        run: cargo clippy --all-features --verbose
+
+  coverage:
+    name: Code coverage
+    runs-on: ubuntu-latest
+    container:
+      image: xd009642/tarpaulin
+      options: --security-opt seccomp=unconfined
+    steps:
+      - uses: actions/checkout@v4
+      - run: cargo tarpaulin --all-features --workspace --verbose
 
   build-linux:
     name: Build project (Linux x64)
