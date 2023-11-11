@@ -10,17 +10,36 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  test:
-    name: rust tests
+  fmt:
+    name: rustfmt
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    - uses: dtolnay/rust-toolchain@stable
-    - name: install rustfmt
-      run: rustup component add rustfmt
-    - name: install clippy
-      run: rustup component add clippy
-    - run: cargo fmt --all --check
-    - run: cargo clippy --all-features --verbose
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt
+      - name: Ensure Rust code is formatted
+        run: cargo fmt --all --check
+
+  test:
+    name: Run Rust tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt
+      - name: Check Rust code with clippy
+      - run: cargo clippy --all-features --verbose
+
+  build-linux:
+    name: Build project (Linux x64)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: rui314/setup-mold@1
+      - name: Build
+        run: cargo build --all --release
 
 
