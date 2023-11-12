@@ -19,7 +19,7 @@ services:
     # PGPORT=
     # PGDATABASE=
     # POSTGRES_DB=
-    # PGOPTIONS=
+    # POSTGRES_INITDB_ARGS=
     # DOCKER_HOST=
     environment:
       PGUSER: "${PGUSER}"
@@ -30,7 +30,7 @@ services:
       POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
       PGDATABASE: "${PGDATABASE}"
       POSTGRES_DB: "${POSTGRES_DB}"
-      PGOPTIONS: "${PGOPTIONS}"
+      POSTGRES_INITDB_ARGS: "${POSTGRES_INITDB_ARGS}"
       DATABASE_URL: "${DATABASE_URL}"
 
     volumes:
