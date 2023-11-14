@@ -3,7 +3,23 @@
 # Script based off of: https://github.com/LukeMathWalker/zero-to-production/blob/main/scripts/init_db.sh
 # (from Zero to Production)
 
-COMPOSE_CONF="containers/postgres/compose.yaml"
+usage() {
+    echo "$0 path-to-compose-conf path-to-env"
+}
+
+if [ -z "${1}" ]; then
+    COMPOSE_CONF="containers/postgres/compose.yaml"
+    echo "Defaulting to ${COMPOSE_CONF}"
+else
+    COMPOSE_CONF="${1}"
+fi
+
+if [ -z "${2}" ]; then
+    ENV_PATH="$(dirname ${0})/.env"
+    echo "Defaulting to ${ENV_PATH}"
+else
+    ENV_PATH="${2}"
+fi
 
 if ! [ -x "$(command -v pg_isready)" ]; then
     printf "Missing: \"pg_isready\""
@@ -19,19 +35,26 @@ if ! [ -x "$(command -v sqlx)" ]; then
 fi
 
 # .env is required or else postgres doesn't launch
-if ! [ -e .env ]; then
+if ! [ -e "${ENV_PATH}" ]; then
     printf "Missing: \".env\""
     printf "You need an environment file to pass to postgres"
+    usage
+    exit 1
+fi
+
+if ! [ -e "${COMPOSE_CONF}" ]; then
+    printf "Missing a Docker Compose configuration file"
+    usage
     exit 1
 fi
 
 # Source .env for pg_isready
-. ./.env
+. "${ENV_PATH}"
 
 # Launch docker and detach so that it runs in the background
-if ! docker compose -f "${COMPOSE_CONF}" --env-file .env up --detach; then
+if ! docker compose -f "${COMPOSE_CONF}" --env-file "${ENV_PATH}" up --detach; then
     echo "Unable to start postgres container via Docker"
-    printf "\tCompose path: %s\n" ${COMPOSE_CONF}
+    printf "\tCompose path: %s\n" "${COMPOSE_CONF}"
     exit 1
 fi
 
