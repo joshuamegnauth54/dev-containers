@@ -15,7 +15,7 @@ else
 fi
 
 if [ -z "${2}" ]; then
-    ENV_PATH="$(dirname ${0})/.env"
+    ENV_PATH="$(dirname "${0}")/.env"
     echo "Defaulting to ${ENV_PATH}"
 else
     ENV_PATH="${2}"
@@ -66,13 +66,13 @@ done
 echo "Running sqlx migrations"
 if ! sqlx database create; then
     echo "Migrations: Failed to create database"
-    docker compose -f "${COMPOSE_CONF}" --env-file .env down
+    docker compose -f "${COMPOSE_CONF}" --env-file "${ENV_PATH}" down
     exit 1
 fi
 
 if ! sqlx migrate run; then
     echo "Migrations: Failed to run migrations"
-    docker compose -f "${COMPOSE_CONF}" --env-file .env down
+    docker compose -f "${COMPOSE_CONF}" --env-file "${ENV_PATH}" down
     exit 1
 fi
 
