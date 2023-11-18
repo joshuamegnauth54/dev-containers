@@ -7,6 +7,10 @@ usage() {
     echo "$0 path-to-compose-conf path-to-env"
 }
 
+stopDocker() {
+    docker compose -f "${COMPOSE_CONF}" --env-file "${ENV_PATH}" down
+}
+
 if [ -z "${1}" ]; then
     COMPOSE_CONF="containers/postgres/compose.yaml"
     echo "Defaulting to ${COMPOSE_CONF}"
@@ -22,28 +26,28 @@ else
 fi
 
 if ! [ -x "$(command -v pg_isready)" ]; then
-    printf "Missing: \"pg_isready\""
-    printf "Install the postgres package for your distro"
+    printf "Missing: \"pg_isready\"\n"
+    printf "Install the postgres package for your distro\n"
     exit 1
 fi
 
 # sqlx for migrations
 if ! [ -x "$(command -v sqlx)" ]; then
-    printf "Missing: \"sqlx\""
-    printf "Install Rust/cargo with:"
-    printf "\tcargo install sqlx-cli --no-default-features --features rustls,postgres"
+    printf "Missing: \"sqlx\"\n"
+    printf "Install Rust/cargo with:\n"
+    printf "\tcargo install sqlx-cli --no-default-features --features rustls,postgres\n"
 fi
 
 # .env is required or else postgres doesn't launch
 if ! [ -e "${ENV_PATH}" ]; then
-    printf "Missing: \".env\""
-    printf "You need an environment file to pass to postgres"
+    printf "Missing: \".env\"\n"
+    printf "You need an environment file to pass to postgres\n"
     usage
     exit 1
 fi
 
 if ! [ -e "${COMPOSE_CONF}" ]; then
-    printf "Missing a Docker Compose configuration file"
+    printf "Missing a Docker Compose configuration file\n"
     usage
     exit 1
 fi
@@ -58,24 +62,36 @@ if ! docker compose -f "${COMPOSE_CONF}" --env-file "${ENV_PATH}" up --detach; t
     exit 1
 fi
 
+# Retry connecting to the postgres server 25 times
+RETRY_COUNT=25
 until pg_isready -d "${DATABASE_URL}"; do
-    echo "Waiting for postgres server to be ready (${PGHOST}:${PGPORT})"
+    if [ $RETRY_COUNT -eq 0 ]; then
+        echo "Retry limit reached. Check Docker's logs for this container."
+        docker compose -f "${COMPOSE_CONF}" --env-file "${ENV_PATH}" logs --timestamps
+        stopDocker
+        exit 1
+    else
+        echo "Waiting for postgres server to be ready (${PGHOST}:${PGPORT})"
+        echo "Retry #${RETRY_COUNT}"
+        RETRY_COUNT=$((RETRY_COUNT - 1))
+    fi
+
     sleep 1
 done
 
 echo "Running sqlx migrations"
 if ! sqlx database create; then
     echo "Migrations: Failed to create database"
-    docker compose -f "${COMPOSE_CONF}" --env-file "${ENV_PATH}" down
+    stopDocker
     exit 1
 fi
 
 if ! sqlx migrate run; then
     echo "Migrations: Failed to run migrations"
-    docker compose -f "${COMPOSE_CONF}" --env-file "${ENV_PATH}" down
+    stopDocker
     exit 1
 fi
 
 # Server started; tail logs
 echo "Postgres server is ready"
-docker compose -f "${COMPOSE_CONF}" logs --follow
+docker compose -f "${COMPOSE_CONF}" --env-file "${ENV_PATH}" logs --follow --timestamps
