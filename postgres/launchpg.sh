@@ -4,27 +4,36 @@
 # (from Zero to Production)
 
 usage() {
-    echo "$0 path-to-compose-conf path-to-env"
+    echo "$0 path-to-compose-conf path-to-env path-to-migrations"
 }
 
 stopDocker() {
     docker compose -f "${COMPOSE_CONF}" --env-file "${ENV_PATH}" down
 }
 
+# Set default arguments if needed
 if [ -z "${1}" ]; then
     COMPOSE_CONF="containers/postgres/compose.yaml"
-    echo "Defaulting to ${COMPOSE_CONF}"
+    echo "Compose config path default: ${COMPOSE_CONF}"
 else
     COMPOSE_CONF="${1}"
 fi
 
 if [ -z "${2}" ]; then
     ENV_PATH="$(dirname "${0}")/.env"
-    echo "Defaulting to ${ENV_PATH}"
+    echo "Env file path default: ${ENV_PATH}"
 else
     ENV_PATH="${2}"
 fi
 
+if [ -z "${3}" ]; then
+    MIGRATIONS_PATH="$(dirname "${0}")/migrations"
+    echo "Migration path default: ${MIGRATIONS_PATH}"
+else
+    MIGRATIONS_PATH="${3}"
+fi
+
+# Check for required binaries
 if ! [ -x "$(command -v pg_isready)" ]; then
     printf "Missing: \"pg_isready\"\n"
     printf "Install the postgres package for your distro\n"
@@ -74,19 +83,18 @@ until pg_isready -d "${DATABASE_URL}"; do
         echo "Waiting for postgres server to be ready (${PGHOST}:${PGPORT})"
         echo "Retry #${RETRY_COUNT}"
         RETRY_COUNT=$((RETRY_COUNT - 1))
+        sleep 2
     fi
-
-    sleep 1
 done
 
 echo "Running sqlx migrations"
-if ! sqlx database create; then
+if ! sqlx database create --database-url "${DATABASE_URL}"; then
     echo "Migrations: Failed to create database"
     stopDocker
     exit 1
 fi
 
-if ! sqlx migrate run; then
+if ! sqlx migrate run --database-url "${DATABASE_URL}" --source "${MIGRATIONS_PATH}"; then
     echo "Migrations: Failed to run migrations"
     stopDocker
     exit 1
