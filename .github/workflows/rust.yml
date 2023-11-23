@@ -44,7 +44,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
-      - uses: rui314/setup-mold@1
+      - uses: rui314/setup-mold@v1
+      - name: Build
+        run: cargo build --all --release
+
+  build-macOS:
+    name: Build project (macOS)
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
       - name: Build
         run: cargo build --all --release
 
