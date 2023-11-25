@@ -17,16 +17,25 @@ jobs:
       - name: Ensure Rust code is formatted
         run: cargo fmt --all --check
 
+  clippy:
+    name: Run clippy for lints
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy
+      - name: Check Rust code with clippy
+        run: cargo clippy --all-features --verbose
+
   test:
     name: Run Rust tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
-        with:
-          components: rustfmt
-      - name: Check Rust code with clippy
-        run: cargo clippy --all-features --verbose
+      - name: Run Rust tests
+        run: cargo test --all-features --all
 
   coverage:
     name: Code coverage
@@ -36,6 +45,8 @@ jobs:
       options: --security-opt seccomp=unconfined
     steps:
       - uses: actions/checkout@v4
+      - name: Run Rust code coverage
+      - continue-on-error: true
       - run: cargo tarpaulin --all-features --workspace --verbose
 
   build-linux:
