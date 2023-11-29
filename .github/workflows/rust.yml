@@ -46,8 +46,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Run Rust code coverage
-      - continue-on-error: true
-      - run: cargo tarpaulin --all-features --workspace --verbose
+        continue-on-error: true
+        run: cargo tarpaulin --all-features --workspace --verbose
 
   build-linux:
     name: Build project (Linux x64)
